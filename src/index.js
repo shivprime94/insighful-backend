@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const { sequelize } = require('./models');
 
 // Import routes
@@ -18,6 +19,9 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from the public directory
+app.use('/downloads', express.static(path.join(__dirname, '../public/downloads')));
 
 // Routes
 app.use('/api/auth', authRoutes);

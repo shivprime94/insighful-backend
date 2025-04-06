@@ -53,13 +53,26 @@ const verifyEmail = async (req, res) => {
     }
 
     // Update employee as verified
-    employee.isVerified = true;
-    employee.verificationToken = null;
-    await employee.save();
+    if (!employee.isVerified) {
+      // Update employee record 
+      employee.isVerified = true;
+      employee.verificationToken = null;
+      await employee.save();
+    }
+
+    // Get the base URL for downloads based on environment
+    const baseUrl = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
+    
+    // Construct the download URL for the appropriate platform
+    const macDownloadUrl = `${baseUrl}/downloads/time-tracker-mac.dmg`;
+    const windowsDownloadUrl = `${baseUrl}/downloads/time-tracker-windows.exe`;
 
     res.json({ 
       message: 'Email verified successfully',
-      downloadUrl: process.env.DESKTOP_APP_DOWNLOAD_URL
+      downloadUrls: {
+        mac: macDownloadUrl,
+        windows: windowsDownloadUrl
+      }
     });
   } catch (error) {
     console.error('Email verification error:', error);
